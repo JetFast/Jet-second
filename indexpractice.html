@@ -1,65 +1,348 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smiley Face</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>On-screen Timer</title>
   <style>
+    :root {
+      --bg: #0f1724;
+      --card: #0b1220;
+      --accent: #06b6d4;
+      --muted: #94a3b8;
+      --glass: rgba(255, 255, 255, 0.03)
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
     body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #071029 0%, #071a2a 100%);
+      color: #e6eef6;
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 100vh;
-      background: #f0f0f0;
+      justify-content: center;
+      padding: 24px;
     }
 
-    .face {
-      width: 200px;
-      height: 200px;
-      background: yellow;
-      border-radius: 50%;
-      position: relative;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    .card {
+      width: 100%;
+      max-width: 520px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
-    .eye {
-      width: 30px;
-      height: 30px;
-      background: black;
-      border-radius: 50%;
-      position: absolute;
-      top: 50px;
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px
     }
 
-    .eye.left {
-      left: 45px;
+    .title h1 {
+      font-size: 18px;
+      margin: 0
     }
 
-    .eye.right {
-      right: 45px;
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 20px
     }
 
-    .mouth {
+    .display {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      font-size: 54px;
+      line-height: 1.0;
+      padding: 22px 18px;
+      border-radius: 10px;
+      background: var(--glass);
+      text-align: center;
+      margin-bottom: 18px
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center
+    }
+
+    .controls button {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: inherit;
+      cursor: pointer;
+      font-weight: 600
+    }
+
+    .controls button.primary {
+      background: linear-gradient(90deg, var(--accent), #0ea5a9);
+      color: #022;
+      box-shadow: 0 6px 18px rgba(6, 182, 212, 0.12);
+      border: none
+    }
+
+    .controls button.warn {
+      background: transparent;
+      border: 1px solid rgba(255, 60, 60, 0.12);
+      color: #ffb4b4
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 12px
+    }
+
+    .input {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: inherit;
       width: 120px;
-      height: 60px;
-      border: 8px solid black;
-      border-top: none;
-      border-radius: 0 0 60px 60px;
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
+      text-align: center
+    }
+
+    .mode-toggle {
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      cursor: pointer
+    }
+
+    .notes {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 12px;
+      text-align: center
+    }
+
+    @media (max-width:480px) {
+      .display {
+        font-size: 40px;
+        padding: 18px
+      }
     }
   </style>
 </head>
+
 <body>
-  <div class="face">
-    <div class="eye left"></div>
-    <div class="eye right"></div>
-    <div class="mouth"></div>
+  <div class="card" role="region" aria-label="Timer">
+    <div class="title">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden>
+        <path d="M12 7v6l4 2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+        </path>
+        <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+      <div>
+        <h1>On-screen Timer</h1>
+        <div class="subtitle">Stopwatch + Countdown — keyboard: Space = start/pause, R = reset</div>
+      </div>
+    </div>
+
+    <div id="display" class="display" aria-live="polite">00:00:00</div>
+
+    <div class="controls" role="group" aria-label="timer controls">
+      <button id="startBtn" class="primary">Start</button>
+      <button id="pauseBtn">Pause</button>
+      <button id="resetBtn">Reset</button>
+      <button id="modeBtn" class="mode-toggle">Mode: Stopwatch</button>
+    </div>
+
+    <div class="row">
+      <input id="countInput" class="input" placeholder="MM:SS or HH:MM:SS" aria-label="countdown input" />
+      <button id="setBtn">Set Countdown</button>
+    </div>
+
+    <div class="notes">When in Countdown mode, press <strong>Set Countdown</strong> after entering time. When it
+      finishes it will flash.</div>
   </div>
+
+  <script>
+    // Simple combined stopwatch + countdown timer
+    const display = document.getElementById('display');
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const modeBtn = document.getElementById('modeBtn');
+    const countInput = document.getElementById('countInput');
+    const setBtn = document.getElementById('setBtn');
+
+    let mode = 'stopwatch'; // or 'countdown'
+    let running = false;
+    let startTs = 0; // epoch ms when started or resumed
+    let elapsed = 0; // ms elapsed for stopwatch
+    let countdownMs = 0; // target ms for countdown
+    let remaining = 0; // ms remaining for countdown
+    let rafId = null;
+
+    function formatTime(ms) {
+      if (ms < 0) ms = 0;
+      const totalSeconds = Math.floor(ms / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      return [hours, minutes, seconds].map(n => String(n).padStart(2, '0')).join(':');
+    }
+
+    function update() {
+      const now = performance.now();
+      if (mode === 'stopwatch') {
+        const delta = now - startTs;
+        const cur = elapsed + delta;
+        display.textContent = formatTime(cur);
+      } else {
+        const delta = now - startTs;
+        const curRem = remaining - delta;
+        display.textContent = formatTime(curRem);
+        if (curRem <= 0) {
+          stopRunning();
+          flashFinish();
+        }
+      }
+      rafId = running ? requestAnimationFrame(update) : null;
+    }
+
+    function startRunning() {
+      if (running) return;
+      running = true;
+      startTs = performance.now();
+      // if countdown and remaining not set, use countdownMs
+      if (mode === 'countdown' && remaining <= 0) { remaining = countdownMs; }
+      rafId = requestAnimationFrame(update);
+      startBtn.textContent = 'Running';
+    }
+    function stopRunning() {
+      if (!running) return;
+      running = false;
+      const now = performance.now();
+      if (mode === 'stopwatch') {
+        elapsed += now - startTs;
+      } else {
+        remaining -= now - startTs;
+        if (remaining < 0) remaining = 0;
+      }
+      if (rafId) cancelAnimationFrame(rafId);
+      startBtn.textContent = 'Start';
+    }
+    function resetAll() {
+      running = false;
+      elapsed = 0;
+      countdownMs = 0;
+      remaining = 0;
+      if (rafId) cancelAnimationFrame(rafId);
+      display.textContent = '00:00:00';
+      startBtn.textContent = 'Start';
+      document.body.style.animation = '';
+      document.body.style.background = '';
+    }
+
+    function parseToMs(str) {
+      // Accept MM:SS or HH:MM:SS or plain seconds
+      if (!str) return 0;
+      const parts = str.split(':').map(p => p.trim()).filter(p => p.length);
+      if (parts.length === 1) {
+        const s = Number(parts[0]);
+        return (isNaN(s) ? 0 : s) * 1000;
+      }
+      let s = 0;
+      if (parts.length === 2) { // MM:SS
+        const m = Number(parts[0]) || 0;
+        const sec = Number(parts[1]) || 0;
+        s = (m * 60 + sec) * 1000;
+      } else {
+        // HH:MM:SS
+        const h = Number(parts[0]) || 0;
+        const m = Number(parts[1]) || 0;
+        const sec = Number(parts[2]) || 0;
+        s = (h * 3600 + m * 60 + sec) * 1000;
+      }
+      return s;
+    }
+
+    function flashFinish() {
+      // simple flash animation
+      let flashes = 0;
+      const iv = setInterval(() => {
+        document.body.style.background = flashes % 2 === 0 ? 'linear-gradient(180deg,#1b2b3a,#071a2a)' : 'linear-gradient(180deg,#163e3f,#071a2a)';
+        flashes++;
+        if (flashes > 7) { clearInterval(iv); document.body.style.background = ''; }
+      }, 250);
+      // beep (if allowed)
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = 880;
+        g.gain.value = 0.05;
+        o.connect(g); g.connect(ctx.destination);
+        o.start();
+        setTimeout(() => { o.stop(); ctx.close(); }, 400);
+      } catch (e) {/* audio blocked */ }
+    }
+
+    // Button wiring
+    startBtn.addEventListener('click', () => { startRunning(); });
+    pauseBtn.addEventListener('click', () => { stopRunning(); });
+    resetBtn.addEventListener('click', () => { resetAll(); });
+
+    modeBtn.addEventListener('click', () => {
+      if (mode === 'stopwatch') {
+        mode = 'countdown';
+        modeBtn.textContent = 'Mode: Countdown';
+        // show placeholder guidance
+        countInput.placeholder = 'MM:SS or HH:MM:SS';
+      } else {
+        mode = 'stopwatch';
+        modeBtn.textContent = 'Mode: Stopwatch';
+      }
+    });
+
+    setBtn.addEventListener('click', () => {
+      const val = countInput.value.trim();
+      const ms = parseToMs(val);
+      if (ms <= 0) { alert('Please enter a valid time (MM:SS or HH:MM:SS or seconds)'); return; }
+      countdownMs = ms; remaining = ms;
+      display.textContent = formatTime(remaining);
+      if (mode !== 'countdown') {
+        mode = 'countdown'; modeBtn.textContent = 'Mode: Countdown';
+      }
+    });
+
+    // Keyboard shortcuts: Space = start/pause, R = reset
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        if (running) stopRunning(); else startRunning();
+      } else if (e.key.toLowerCase() === 'r') {
+        resetAll();
+      }
+    });
+
+    // initialize display
+    display.textContent = '00:00:00';
+  </script>
 </body>
+
 </html>
-
-
-
