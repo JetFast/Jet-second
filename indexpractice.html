@@ -1,6 +1,65 @@
-This is a new repository
-This is a new feature (dropdown)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smiley Face</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f0f0f0;
+    }
 
-anotherr
+    .face {
+      width: 200px;
+      height: 200px;
+      background: yellow;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .eye {
+      width: 30px;
+      height: 30px;
+      background: black;
+      border-radius: 50%;
+      position: absolute;
+      top: 50px;
+    }
+
+    .eye.left {
+      left: 45px;
+    }
+
+    .eye.right {
+      right: 45px;
+    }
+
+    .mouth {
+      width: 120px;
+      height: 60px;
+      border: 8px solid black;
+      border-top: none;
+      border-radius: 0 0 60px 60px;
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  </style>
+</head>
+<body>
+  <div class="face">
+    <div class="eye left"></div>
+    <div class="eye right"></div>
+    <div class="mouth"></div>
+  </div>
+</body>
+</html>
+
 
 
